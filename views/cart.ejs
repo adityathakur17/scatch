@@ -1,0 +1,76 @@
+<%- include('./partials/header') %>
+
+<div class="w-full h-screen flex flex-col items-center px-20 py-20 gap-10">
+    <!-- Carousel Container -->
+    <div class="carousel-container w-full max-w-lg">
+        <div class="carousel-image relative w-full h-80 bg-gray-200 flex items-center justify-center overflow-hidden">
+            <img id="product-image" class="h-full object-contain" src="data:image/jpeg;base64, <%= user.cart[0].image.toString('base64') %>" alt="Product Image">
+        </div>
+        <div class="carousel-controls flex justify-between mt-5">
+            <button id="prev-btn" class="carousel-btn px-4 py-2 bg-blue-500 text-white rounded">Prev</button>
+            <button id="next-btn" class="carousel-btn px-4 py-2 bg-blue-500 text-white rounded">Next</button>
+        </div>
+    </div>
+
+    <!-- Product Info Container -->
+    <div id="product-details" class="w-full max-w-2xl">
+        <h3 class="text-xl mb-4">Price Breakdown</h3>
+        <div class="px-10">
+            <div class="flex justify-between mt-2">
+                <h4>Total MRP</h4>
+                <h4 id="total-mrp">₹ <%= user.cart[0].price %></h4>
+            </div>
+            <div class="flex justify-between mt-2">
+                <h4>Discount on MRP</h4>
+                <h4 id="discount">₹ <%= user.cart[0].discount %></h4>
+            </div>
+            <div class="flex justify-between mt-2">
+                <h4>Platform Fee</h4>
+                <h4>₹ 20</h4>
+            </div>
+            <div class="flex justify-between mt-2">
+                <h4>Shipping Fee</h4>
+                <h4>FREE</h4>
+            </div>
+        </div>
+        <div class="w-full h-[1px] bg-black mt-10"></div>
+        <div class="flex justify-between mt-5">
+            <h3 class="text-xl">Total Amount</h3>
+            <h3 id="total-amount" class="font-semibold text-xl text-green-600">₹ <%= (Number(user.cart[0].price) + 20) - Number(user.cart[0].discount) %></h3>
+        </div>
+    </div>
+</div>
+
+<%- include('./partials/footer') %>
+
+<script>
+    // JavaScript for carousel functionality
+    const cart = <%- JSON.stringify(user.cart) %>;
+    let currentIndex = 0;
+
+    const productImage = document.getElementById('product-image');
+    const totalMrp = document.getElementById('total-mrp');
+    const discount = document.getElementById('discount');
+    const totalAmount = document.getElementById('total-amount');
+
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    function updateProductDisplay(index) {
+        const item = cart[index];
+        productImage.src = `data:image/jpeg;base64, ${item.image.toString('base64')}`;
+        totalMrp.innerText = `₹ ${item.price}`;
+        discount.innerText = `₹ ${item.discount}`;
+        totalAmount.innerText = `₹ ${(Number(item.price) + 20) - Number(item.discount)}`;
+    }
+
+    prevBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex - 1 + cart.length) % cart.length;
+        updateProductDisplay(currentIndex);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        currentIndex = (currentIndex + 1) % cart.length;
+        updateProductDisplay(currentIndex);
+    });
+</script>
